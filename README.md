@@ -27,7 +27,7 @@ When working with LLMs, you often need to provide your entire codebase as contex
 
 ### Option 1: Download EXE (Windows - Recommended)
 
-Download the latest version of [**ProjectScanner.exe**](https://github.com/sygkanrt30/ProjectScanner/releases/latest/download/ProjectScanner.exe) from the [Releases](https://github.com/sygkanrt30/ProjectScanner/releases) page.
+Download the latest version of [**ProjectScanner.exe**](https://github.com/sygkanrt30/project-scanner/releases/download/exe/ProjectScanner.exe) from the [Releases](https://github.com/sygkanrt30/project-scanner/releases/tag/exe) page.
 
  **No Java required!**
 
