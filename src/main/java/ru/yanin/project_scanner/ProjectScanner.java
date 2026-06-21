@@ -78,9 +78,9 @@ public class ProjectScanner {
     /**
      * Scans the project directory and generates a consolidated output file.
      *
-     * @param rootPath   The root directory path of the project to scan
-     * @param outputFile The name of the file where the consolidated output will be written
-     * @param excludedDirs List of directory names that will be excluded from the scan
+     * @param rootPath           The root directory path of the project to scan
+     * @param outputFile         The name of the file where the consolidated output will be written
+     * @param excludedDirs       List of directory names that will be excluded from the scan
      * @param includedExtensions List of file extensions that will be included in the scan
      */
     private static void scanProject(String rootPath, String outputFile,
