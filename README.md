@@ -128,19 +128,11 @@ These directories are automatically skipped:
 ##  Building EXE from Source (Optional)
 
 If you want to generate the EXE file yourself:
-
+When using the Launch4j EXE plugin in POM Maven
 ```bash
-# Build the JAR with dependencies
 mvn clean package
-
-# Use jpackage to create EXE (requires jpackage which is included in JDK 14+)
-jpackage --input target \
-         --name ProjectScanner \
-         --main-jar ProjectScanner-1.0-SNAPSHOT-jar-with-dependencies.jar \
-         --main-class ru.yanin.project_scanner.ProjectScanner \
-         --type app-image \
-         --win-console
 ```
+EXE will appear in the folder target/ProjectScanner.exe - Self-contained and ready to use!
 
 > **Note:** The generated EXE will be in the `ProjectScanner` folder. You can copy it anywhere and run it.
 
