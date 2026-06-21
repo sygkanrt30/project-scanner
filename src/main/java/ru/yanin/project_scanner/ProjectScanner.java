@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -40,37 +41,33 @@ import java.util.List;
 public class ProjectScanner {
 
     /**
-     * List of file extensions that will be included in the scan.
-     */
-    private static final List<String> INCLUDED_EXTENSIONS = List.of(
-            ".java", ".gradle", ".kt", ".kts", ".xml", ".yml", ".yaml",
-            ".properties", ".json", ".md", ".txt"
-    );
-
-    /**
-     * List of directory names that will be excluded from the scan.
-     */
-    private static final List<String> EXCLUDED_DIRS = List.of(
-            ".git", "build", "target", "out", "bin", ".idea", "node_modules"
-    );
-
-    /**
      * Entry point of the application.
      *
      * @param args Command-line arguments:
      *             <ul>
-     *             <li>args[0] - (optional) Path to the project root directory.
+     *             <li>args[0] - (mandatory) Name of Language configuration</li>
+     *             <li>args[1] - (optional) Path to the project root directory.
      *             Defaults to current directory (".")</li>
-     *             <li>args[1] - (optional) Name of the output file.
+     *             <li>args[2] - (optional) Name of the output file.
      *             Defaults to "project_code.txt"</li>
      *             </ul>
      */
     public static void main(String[] args) {
-        String projectRoot = args.length > 0 ? args[0] : ".";
-        String outputFile = args.length > 1 ? args[1] : "project_code.txt";
+        LanguageConfig languageConfig;
+        try {
+            languageConfig = LanguageConfig.fromLanguageName(args.length > 0 ? args[0] : " ");
+        } catch (Exception e) {
+            System.err.println("Language detection error: " + e.getMessage());
+            System.err.println("Supported languages : " + Arrays.toString(LanguageConfig.values()));
+            return;
+        }
+        List<String> includedExtensions = languageConfig.getIncludedExtensions();
+        List<String> excludedDirs = languageConfig.getExcludedDirs();
+        String projectRoot = args.length > 1 ? args[1] : ".";
+        String outputFile = args.length > 2 ? args[2] : "project_code.txt";
 
         try {
-            scanProject(projectRoot, outputFile);
+            scanProject(projectRoot, outputFile, excludedDirs, includedExtensions);
             System.out.println("Project scanned successfully! Output: " + outputFile);
         } catch (IOException e) {
             System.err.println("Error scanning project: " + e.getMessage());
@@ -83,11 +80,14 @@ public class ProjectScanner {
      *
      * @param rootPath   The root directory path of the project to scan
      * @param outputFile The name of the file where the consolidated output will be written
+     * @param excludedDirs List of directory names that will be excluded from the scan
+     * @param includedExtensions List of file extensions that will be included in the scan
      */
-    private static void scanProject(String rootPath, String outputFile) throws IOException {
+    private static void scanProject(String rootPath, String outputFile,
+                                    List<String> excludedDirs, List<String> includedExtensions) throws IOException {
         Path root = Paths.get(rootPath).toAbsolutePath();
         List<Path> files = new ArrayList<>();
-        Files.walkFileTree(root, getFileVisitor(files));
+        Files.walkFileTree(root, getFileVisitor(files, excludedDirs, includedExtensions));
 
         // Sort files by path depth (shorter paths first), then by path name
         files.sort(Comparator.comparingInt(Path::getNameCount).thenComparing(p -> p));
@@ -118,12 +118,13 @@ public class ProjectScanner {
         }
     }
 
-    private static FileVisitor<Path> getFileVisitor(List<Path> files) {
+    private static FileVisitor<Path> getFileVisitor(List<Path> files,
+                                                    List<String> excludedDirs, List<String> includedExtensions) {
         return new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 String dirName = dir.getFileName().toString();
-                if (EXCLUDED_DIRS.contains(dirName)) {
+                if (excludedDirs.contains(dirName)) {
                     return FileVisitResult.SKIP_SUBTREE;
                 }
                 return FileVisitResult.CONTINUE;
@@ -131,7 +132,7 @@ public class ProjectScanner {
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                if (isIncludedFile(file)) {
+                if (isIncludedFile(file, includedExtensions)) {
                     files.add(file);
                 }
                 return FileVisitResult.CONTINUE;
@@ -139,9 +140,9 @@ public class ProjectScanner {
         };
     }
 
-    private static boolean isIncludedFile(Path file) {
+    private static boolean isIncludedFile(Path file, List<String> includedExtensions) {
         String fileName = file.getFileName().toString();
-        return INCLUDED_EXTENSIONS.stream()
+        return includedExtensions.stream()
                 .anyMatch(ext -> fileName.toLowerCase().endsWith(ext));
     }
 }
