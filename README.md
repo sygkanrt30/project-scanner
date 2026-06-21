@@ -122,7 +122,8 @@ These directories are automatically skipped:
 ```
 .git  |  build  |  target  |  out  |  bin  |  .idea  |  node_modules
 ```
-
+  But if you want changing include extensions or exclude directories, just change constants in script
+  
 ---
 
 ##  Building EXE from Source (Optional)
