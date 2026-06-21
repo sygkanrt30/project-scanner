@@ -20,60 +20,102 @@ When working with LLMs, you often need to provide your entire codebase as contex
 -  **Excludes unnecessary files** (build artifacts, .git, etc.)
 -  **Saves hours** of manual copy-pasting
 -  **Creates LLM-ready context** in seconds
-
----
-
-##  Installation Options
-
-### Option 1: Download EXE (Windows - Recommended)
-
-Download the latest version of [**ProjectScanner.exe**](https://github.com/sygkanrt30/project-scanner/releases/download/exe/ProjectScanner.exe) from the [Releases](https://github.com/sygkanrt30/project-scanner/releases/tag/exe) page.
-
- **No Java required!**
-
-### Option 2: Build from Source (Cross-platform)
-
-**Requirements:**
-- Java 21 or higher
-- Maven 3.6+
-
-**Clone and build:**
-```bash
-git clone https://github.com/sygkanrt30/ProjectScanner.git
-cd ProjectScanner
-mvn clean package
-```
-
-**Run:**
-```bash
-java ProjectScanner.java [project_path] [output_file]
-```
+-  **Supports 16+ programming languages** with predefined configurations
 
 ---
 
 ##  Usage
 
 ```bash
-# Scan current directory, output to project_code.txt
-ProjectScanner.exe
+# Scan current directory with Java configuration (default)
+ProjectScanner.exe java
 
-# Scan specified directory
-ProjectScanner.exe C:\MyProject
+# Scan with Python configuration
+ProjectScanner.exe python
 
-# Scan with custom output file
-ProjectScanner.exe C:\MyProject project_snapshot.txt
+# Scan specific directory with language
+ProjectScanner.exe java C:\MyProject
+
+# Scan with custom output file and language
+ProjectScanner.exe python C:\MyProject project_snapshot.txt
+
+# Language names are case-insensitive
+ProjectScanner.exe JAVA
+ProjectScanner.exe JavaScript
+ProjectScanner.exe csharp
 ```
 
-### Command Line Parameters
+### Command Line Arguments
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `[project_path]` | Path to the project root directory | `.` (current directory) |
-| `[output_file]` | Name of the output file | `project_code.txt` |
+```bash
+ProjectScanner.exe [language] [project_path] [output_file]
+```
+
+| Argument | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `language` | Programming language (see table below) | `java` | ✅ Yes |
+| `project_path` | Path to the project root directory | `.` (current directory) | ❌ No |
+| `output_file` | Name of the output file | `project_code.txt` | ❌ No |
+
+**Example:**
+```bash
+# Scan Python project in current directory
+ProjectScanner.exe python
+
+# Scan Go project in specific folder with custom output
+ProjectScanner.exe golang D:\MyGoProject go_snapshot.txt
+```
 
 ---
 
-##  Example Output
+## 🔧 Supported Languages
+
+The scanner comes with **16 predefined language configurations**. Each configuration includes:
+- **Included extensions** - which file types to scan
+- **Excluded directories** - which folders to skip
+
+| Language | Command Argument | Included Extensions |
+|----------|------------------|---------------------|
+| **Java** | `java` | `.java`, `.gradle`, `.kt`, `.kts`, `.xml`, `.yml`, `.yaml`, `.properties`, `.json`, `.md`, `.txt` |
+| **Kotlin** | `kotlin` | `.kt`, `.kts`, `.java`, `.gradle`, `.xml`, `.yml`, `.yaml`, `.properties`, `.json`, `.md`, `.txt` |
+| **Scala** | `scala` | `.scala`, `.sbt`, `.sc`, `.java`, `.gradle`, `.xml`, `.yml`, `.yaml`, `.properties`, `.json`, `.md`, `.txt` |
+| **C#** | `csharp` | `.cs`, `.csproj`, `.sln`, `.config`, `.xml`, `.yml`, `.yaml`, `.json`, `.md`, `.txt`, `.resx` |
+| **Python** | `python` | `.py`, `.pyi`, `.pyx`, `.ipynb`, `.yml`, `.yaml`, `.json`, `.ini`, `.cfg`, `.md`, `.txt`, `.toml`, `.sh` |
+| **Ruby** | `ruby` | `.rb`, `.erb`, `.rake`, `.gemfile`, `.yml`, `.yaml`, `.json`, `.md`, `.txt`, `.ru`, `.thor` |
+| **Go** | `golang` | `.go`, `.mod`, `.sum`, `.yml`, `.yaml`, `.json`, `.md`, `.txt`, `.sh`, `.proto` |
+| **JavaScript** | `javascript` | `.js`, `.jsx`, `.ts`, `.tsx`, `.json`, `.yml`, `.yaml`, `.md`, `.txt`, `.html`, `.css`, `.scss`, `.less` |
+| **TypeScript** | `typescript` | `.ts`, `.tsx`, `.js`, `.jsx`, `.json`, `.yml`, `.yaml`, `.md`, `.txt`, `.html`, `.css`, `.scss`, `.less` |
+| **PHP** | `php` | `.php`, `.php7`, `.phar`, `.module`, `.inc`, `.yml`, `.yaml`, `.json`, `.md`, `.txt`, `.xml`, `.htaccess` |
+| **Rust** | `rust` | `.rs`, `.toml`, `.lock`, `.yml`, `.yaml`, `.json`, `.md`, `.txt` |
+| **Swift** | `swift` | `.swift`, `.xcodeproj`, `.xcworkspace`, `.plist`, `.yml`, `.yaml`, `.json`, `.md`, `.txt`, `.strings` |
+| **Perl** | `perl` | `.pl`, `.pm`, `.t`, `.pod`, `.yml`, `.yaml`, `.json`, `.md`, `.txt`, `.cgi` |
+| **Shell** | `shell` | `.sh`, `.bash`, `.zsh`, `.fish`, `.ksh`, `.profile`, `.rc`, `.yml`, `.yaml`, `.json`, `.md`, `.txt` |
+| **Dart** | `dart` | `.dart`, `.yaml`, `.json`, `.md`, `.txt`, `.html`, `.css`, `.js` |
+| **R** | `r` | `.r`, `.rmd`, `.rdata`, `.rds`, `.yml`, `.yaml`, `.json`, `.md`, `.txt`, `.rnw` |
+
+> **💡 Note**: Language names are **case-insensitive**. Use `java`, `JAVA`, `Java` - all work the same!
+
+### Excluded Directories (Common for All Languages)
+
+The scanner automatically excludes these directories for all languages:
+```
+.git  |  build  |  target  |  out  |  bin  |  .idea  |  node_modules  |  .vscode
+```
+
+Each language configuration may also have **language-specific exclusions**:
+- **Java/Kotlin/Scala**: `.gradle`
+- **Python**: `__pycache__`, `venv`, `.env`, `*.egg-info`, `.pytest_cache`
+- **C#**: `obj`, `packages`, `.vs`
+- **Ruby**: `vendor`, `.bundle`, `tmp`, `log`
+- **Rust**: `debug`, `release`
+- **Go**: `vendor`
+- **Swift**: `DerivedData`, `Pods`
+- **PHP**: `var`, `cache`, `logs`
+- **Scala**: `.metals`, `project`
+
+---
+
+## 📄 Example Output
 
 ```
 PROJECT STRUCTURE:
@@ -103,39 +145,45 @@ import java.io.FileWriter;
 
 ---
 
-##  Included File Extensions
+## 📦 Installation Options
 
-The scanner processes files with these extensions:
+### Option 1: Download EXE (Windows - Recommended)
 
-| Type | Extensions |
-|------|------------|
-| **Languages** | `.java`, `.gradle`, `.kt`, `.kts` |
-| **Configurations** | `.xml`, `.yml`, `.yaml`, `.properties`, `.json` |
-| **Documentation** | `.md`, `.txt` |
+Download the latest version of [**ProjectScanner.exe**](https://github.com/sygkanrt30/project-scanner/releases/download/exe/ProjectScanner.exe) from the [Releases](https://github.com/sygkanrt30/project-scanner/releases/tag/exe) page.
 
----
+✅ **No Java required!**
 
-##  Excluded Directories
+### Option 2: Build from Source (Cross-platform)
 
-These directories are automatically skipped:
+**Requirements:**
+- Java 21 or higher
+- Maven 3.6+
 
+**Clone and build:**
+```bash
+git clone https://github.com/sygkanrt30/ProjectScanner.git
+cd ProjectScanner
+mvn clean package
 ```
-.git  |  build  |  target  |  out  |  bin  |  .idea  |  node_modules
+
+**Run:**
+```bash
+java ProjectScanner.java [language_name] [project_path] [output_file]
 ```
-  But if you want changing include extensions or exclude directories, just change constants in script
-  
+
 ---
 
 ##  Building EXE from Source (Optional)
 
 If you want to generate the EXE file yourself:
-When using the Launch4j EXE plugin in POM Maven
+
 ```bash
 mvn clean package
 ```
-EXE will appear in the folder target/ProjectScanner.exe - Self-contained and ready to use!
 
-> **Note:** The generated EXE will be in the `ProjectScanner` folder. You can copy it anywhere and run it.
+The EXE will appear in the `target/` folder as `ProjectScanner.exe` - Self-contained and ready to use!
+
+> **Note:** You can copy the EXE anywhere and run it.
 
 ---
 
